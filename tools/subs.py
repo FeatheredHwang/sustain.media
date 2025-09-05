@@ -22,22 +22,21 @@ def format_timestamp(td: timedelta) -> str:
     return f"{hours:02}:{minutes:02}:{seconds:02},{milliseconds:03}"
 
 
-def vtt_chk(og_path: str) -> None:
+def vtt_chk(og_path: Path) -> None:
     """
     Convert a WebVTT file into SRT format.
     Adjust start time if it equals the previous end time.
     """
     # ######################################################################################## #
     # Create a timestamped backup copy of a file.
-    _og_path = Path(og_path)
-    backup_folder = _og_path.parent / "__pycache__"
+    backup_folder = og_path.parent / "__pycache__"
     backup_folder.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_name = f"{_og_path.stem}_backup_{timestamp}{_og_path.suffix}"
+    backup_name = f"{og_path.stem}_backup_{timestamp}{og_path.suffix}"
     backup_path = backup_folder / backup_name
 
-    shutil.copy2(_og_path, backup_path)
+    shutil.copy2(og_path, backup_path)
     print(f"VTT file backup-ed: {backup_path}")
 
     # ######################################################################################## #
@@ -87,10 +86,11 @@ def vtt_chk(og_path: str) -> None:
 
         i += 1
 
-    output_path = _og_path.with_name(f"{_og_path.stem}_checked.vtt")
-    with open(output_path, "w", encoding="utf-8") as outfile:
+    # output_path = backup_folder / f"{_og_path.stem}_checked.vtt"
+    with open(og_path, "w", encoding="utf-8") as outfile:
         outfile.writelines(chk_lines)
 
+    print(f"VTT file checked: {og_path}")
 
     # ######################################################################################## #
     # Convert the WebVTT content into SRT format.
@@ -133,7 +133,7 @@ def vtt_chk(og_path: str) -> None:
 
         i += 1
 
-    output_path = _og_path.with_name(f"{_og_path.stem}.srt")
+    output_path = backup_folder / f"{og_path.stem}.srt"
     with open(output_path, "w", encoding="utf-8") as outfile:
         outfile.writelines(srt_lines)
     
@@ -144,5 +144,5 @@ def vtt_chk(og_path: str) -> None:
 # Example usage
 if __name__ == "__main__":
     subs_dir = Path(__file__).parent.parent / "data" / "subtitle"
-    vtt_path = Path(dialog.select_file(ext="vtt", initialdir=subs_dir))
-    vtt_chk(str(vtt_path))
+    vtt_path = dialog.select_file(ext="vtt", initialdir=subs_dir)
+    vtt_chk(vtt_path)

@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
 
-from Tools.demo.sortvisu import insertionsort
-
 
 def select_file(ext: str = None, initialdir: Path = None) -> Path | None:
     """
