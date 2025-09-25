@@ -141,7 +141,6 @@ def vtt_chk(og_path: Path) -> None:
 
 
 
-# Example usage
 if __name__ == "__main__":
     subs_dir = Path(__file__).parent.parent / "data" / "subtitle"
     vtt_path = dialog.select_file(ext="vtt", initialdir=subs_dir)
